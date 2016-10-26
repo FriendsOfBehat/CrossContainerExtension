@@ -1,0 +1,23 @@
+{
+    "name": "friends-of-behat/cross-container-extension",
+    "description": "Makes possible to inject services and parameters from other containers.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kamil Kokot",
+            "email": "kamil@kokot.me",
+            "homepage": "http://kamil.kokot.me"
+        }
+    ],
+    "require": {
+        "php": "^5.6|^7.0",
+
+        "behat/behat": "^3.1"
+    },
+    "require-dev": {
+        "friends-of-behat/test-context": "^0.2"
+    },
+    "autoload": {
+        "psr-4": { "FriendsOfBehat\\CrossContainerExtension\\": "src/" }
+    }
+}
