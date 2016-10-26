@@ -1,0 +1,4 @@
+suites:
+    main:
+        namespace: FriendsOfBehat\CrossContainerExtension
+        psr4_prefix: FriendsOfBehat\CrossContainerExtension

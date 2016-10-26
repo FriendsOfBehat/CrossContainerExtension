@@ -13,12 +13,30 @@ namespace FriendsOfBehat\CrossContainerExtension\ServiceContainer;
 
 use Behat\Testwork\ServiceContainer\Extension;
 use Behat\Testwork\ServiceContainer\ExtensionManager;
+use FriendsOfBehat\CrossContainerExtension\ContainerAccessor;
+use FriendsOfBehat\CrossContainerExtension\ContainerBasedContainerAccessor;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class CrossContainerExtension implements Extension
 {
     /**
+     * @var ContainerAccessor[]
+     */
+    private $containers = [];
+
+    /**
+     * @param string $containerIdentifier
+     * @param ContainerAccessor $containerAccessor
+     */
+    public function addContainer($containerIdentifier, ContainerAccessor $containerAccessor)
+    {
+        $this->containers[$containerIdentifier] = $containerAccessor;
+    }
+
+    /**
+     * @internal
+     *
      * {@inheritdoc}
      */
     public function getConfigKey()
@@ -27,6 +45,8 @@ final class CrossContainerExtension implements Extension
     }
 
     /**
+     * @internal
+     *
      * {@inheritdoc}
      */
     public function initialize(ExtensionManager $extensionManager)
@@ -35,6 +55,8 @@ final class CrossContainerExtension implements Extension
     }
 
     /**
+     * @internal
+     *
      * {@inheritdoc}
      */
     public function configure(ArrayNodeDefinition $builder)
@@ -43,14 +65,18 @@ final class CrossContainerExtension implements Extension
     }
 
     /**
+     * @internal
+     *
      * {@inheritdoc}
      */
     public function load(ContainerBuilder $container, array $config)
     {
-
+        $this->containers['behat'] = new ContainerBasedContainerAccessor($container);
     }
 
     /**
+     * @internal
+     *
      * {@inheritdoc}
      */
     public function process(ContainerBuilder $container)
