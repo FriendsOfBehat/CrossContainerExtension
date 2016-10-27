@@ -34,4 +34,5 @@ script:
     - composer validate --strict
 
     - vendor/bin/phpspec run --format dot -vvv --no-interaction
+    - vendor/bin/phpunit
     - vendor/bin/behat --strict -vvv --no-interaction
