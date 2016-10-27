@@ -51,7 +51,6 @@ final class CrossContainerExtension implements Extension
      */
     public function initialize(ExtensionManager $extensionManager)
     {
-
     }
 
     /**
@@ -61,7 +60,6 @@ final class CrossContainerExtension implements Extension
      */
     public function configure(ArrayNodeDefinition $builder)
     {
-
     }
 
     /**
@@ -81,6 +79,5 @@ final class CrossContainerExtension implements Extension
      */
     public function process(ContainerBuilder $container)
     {
-
     }
 }
