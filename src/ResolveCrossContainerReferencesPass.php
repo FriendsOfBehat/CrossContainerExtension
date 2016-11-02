@@ -91,35 +91,47 @@ final class ResolveCrossContainerReferencesPass implements CompilerPassInterface
      */
     private function resolveReference(ContainerBuilder $container, Reference $reference)
     {
-        $containerIdentifier = preg_replace('/^__([^_]+)__\..+$/', '$1', (string) $reference);
-
-        if (!isset($this->containerAccessors[$containerIdentifier])) {
+        if (!ExternalReference::isValid($reference)) {
             return $reference;
         }
 
-        $serviceIdentifier = preg_replace('/^__[^_]+__\.(.+)$/', '$1', (string) $reference);
-
-        return $this->transformReferenceToDefinition($container, $containerIdentifier, $serviceIdentifier);
+        return $this->transformReferenceToDefinition($container, new ExternalReference($reference));
     }
 
     /**
      * @param ContainerBuilder $container
-     * @param string $containerIdentifier
-     * @param string $serviceIdentifier
+     * @param ExternalReference $externalReference
      *
      * @return Definition
      */
-    private function transformReferenceToDefinition(ContainerBuilder $container, $containerIdentifier, $serviceIdentifier)
+    private function transformReferenceToDefinition(ContainerBuilder $container, ExternalReference $externalReference)
     {
-        $containerAccessorIdentifier = sprintf('__%s__', $containerIdentifier);
+        $this->assertExternalReferenceHasKnownContainer($externalReference);
+
+        $containerAccessorIdentifier = sprintf('__%s__', $externalReference->containerIdentifier());
         if (!$container->has($containerAccessorIdentifier)) {
-            $container->set($containerAccessorIdentifier, $this->containerAccessors[$containerIdentifier]);
+            $container->set($containerAccessorIdentifier, $this->containerAccessors[$externalReference->containerIdentifier()]);
         }
 
-        $definition = new Definition(null, [$serviceIdentifier]);
+        $definition = new Definition(null, [$externalReference->serviceIdentifier()]);
         $definition->setFactory([new Reference($containerAccessorIdentifier), 'getService']);
 
         return $definition;
+    }
+
+    /**
+     * @param ExternalReference $externalReference
+     *
+     * @throws \DomainException
+     */
+    private function assertExternalReferenceHasKnownContainer(ExternalReference $externalReference)
+    {
+        if (!isset($this->containerAccessors[$externalReference->containerIdentifier()])) {
+            throw new \DomainException(sprintf(
+                'External container with identifier "%s" does not exist.',
+                $externalReference->containerIdentifier()
+            ));
+        }
     }
 
     /**
