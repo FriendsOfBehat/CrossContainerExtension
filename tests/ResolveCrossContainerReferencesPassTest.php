@@ -25,7 +25,6 @@ final class ResolveCrossContainerReferencesPassTest extends \PHPUnit_Framework_T
 
         $this->buildContainerWithDependencies($baseContainer, ['external' => $externalContainer]);
 
-        static::assertTrue($baseContainer->has('array_object'));
         static::assertInstanceOf(\ArrayObject::class, $baseContainer->get('array_object'));
         static::assertSame(['foo' => 'bar'], $baseContainer->get('array_object')->getArrayCopy());
     }
@@ -40,32 +39,11 @@ final class ResolveCrossContainerReferencesPassTest extends \PHPUnit_Framework_T
 
         $baseContainer = new ContainerBuilder();
         $baseContainer->setDefinition('array_object', new Definition(\ArrayObject::class, [
-            ['std_class' => new Reference('__external__.std_class')],
-        ]));
-
-        $this->buildContainerWithDependencies($baseContainer, ['external' => $externalContainer]);
-
-        static::assertTrue($baseContainer->has('array_object'));
-        static::assertInstanceOf(\ArrayObject::class, $baseContainer->get('array_object'));
-        static::assertInstanceOf(\stdClass::class, $baseContainer->get('array_object')['std_class']);
-    }
-
-    /**
-     * @test
-     */
-    public function it_resolves_cross_container_references_in_service_argument_nested_array()
-    {
-        $externalContainer = new ContainerBuilder();
-        $externalContainer->setDefinition('std_class', new Definition(\stdClass::class));
-
-        $baseContainer = new ContainerBuilder();
-        $baseContainer->setDefinition('array_object', new Definition(\ArrayObject::class, [
             ['std' => ['class' => new Reference('__external__.std_class')]],
         ]));
 
         $this->buildContainerWithDependencies($baseContainer, ['external' => $externalContainer]);
 
-        static::assertTrue($baseContainer->has('array_object'));
         static::assertInstanceOf(\ArrayObject::class, $baseContainer->get('array_object'));
         static::assertInstanceOf(\stdClass::class, $baseContainer->get('array_object')['std']['class']);
     }
@@ -87,7 +65,6 @@ final class ResolveCrossContainerReferencesPassTest extends \PHPUnit_Framework_T
 
         $this->buildContainerWithDependencies($baseContainer, ['external' => $externalContainer]);
 
-        static::assertTrue($baseContainer->has('array_object'));
         static::assertInstanceOf(\ArrayObject::class, $baseContainer->get('array_object'));
         static::assertInstanceOf(\stdClass::class, $baseContainer->get('array_object')->getArrayCopy()['std_class']);
     }
@@ -105,7 +82,6 @@ final class ResolveCrossContainerReferencesPassTest extends \PHPUnit_Framework_T
 
         $this->buildContainerWithDependencies($baseContainer, ['external' => $externalContainer]);
 
-        static::assertTrue($baseContainer->hasParameter('parameter'));
         static::assertSame('42', $baseContainer->getParameter('parameter'));
     }
 
@@ -124,7 +100,6 @@ final class ResolveCrossContainerReferencesPassTest extends \PHPUnit_Framework_T
 
         $this->buildContainerWithDependencies($baseContainer, ['external' => $externalContainer]);
 
-        static::assertTrue($baseContainer->hasDefinition('array_object'));
         static::assertSame(['parameter' => '42'], $baseContainer->get('array_object')->getArrayCopy());
     }
 
