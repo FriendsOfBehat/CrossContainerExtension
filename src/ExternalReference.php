@@ -35,17 +35,15 @@ final class ExternalReference
      */
     public function __construct($identifierOrReference)
     {
-        if ((bool) preg_match('/^__(?P<container_identifier>.+?)__\.(?P<service_identifier>.++)$/', (string) $identifierOrReference, $matches)) {
-            $this->containerIdentifier = $matches['container_identifier'];
-            $this->serviceIdentifier = $matches['service_identifier'];
-        }
-
-        if (null === $this->containerIdentifier || null === $this->serviceIdentifier) {
+        if (!preg_match('/^__(?P<container_identifier>.+?)__\.(?P<service_identifier>.++)$/', (string) $identifierOrReference, $matches)) {
             throw new \InvalidArgumentException(sprintf(
                 'Given argument "%s" is not an external reference.',
                 $identifierOrReference
             ));
         }
+
+        $this->containerIdentifier = $matches['container_identifier'];
+        $this->serviceIdentifier = $matches['service_identifier'];
     }
 
     /**
