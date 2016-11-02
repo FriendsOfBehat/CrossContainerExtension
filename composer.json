@@ -15,7 +15,7 @@
         "behat/behat": "^3.1"
     },
     "require-dev": {
-        "friends-of-behat/test-context": "^0.2",
+        "friends-of-behat/test-context": "^0.3",
         "phpspec/phpspec": "^3.1",
         "symfony/http-kernel": "^2.8|^3.0",
         "phpunit/phpunit": "^5.6"
