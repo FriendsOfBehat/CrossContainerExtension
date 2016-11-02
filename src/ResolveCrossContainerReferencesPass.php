@@ -27,16 +27,11 @@ final class ResolveCrossContainerReferencesPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        $definitions = $container->getDefinitions();
-        foreach ($definitions as $definition) {
-            $this->resolveDefinition($container, $definition);
+        foreach ($container->getDefinitions() as $identifier => $definition) {
+            $container->setDefinition($identifier, $this->resolveDefinition($container, $definition));
         }
 
-        foreach ($this->containerAccessors as $containerIdentifier => $containerAccessor) {
-            foreach ($containerAccessor->getParameters() as $name => $value) {
-                $container->setParameter(sprintf('__%s__.%s', $containerIdentifier, $name), $value);
-            }
-        }
+        $this->copyParameters($container);
     }
 
     /**
@@ -98,25 +93,44 @@ final class ResolveCrossContainerReferencesPass implements CompilerPassInterface
     {
         $containerIdentifier = preg_replace('/^__([^_]+)__\..+$/', '$1', (string) $reference);
 
-        if (null === $containerIdentifier) {
-            return $reference;
-        }
-
         if (!isset($this->containerAccessors[$containerIdentifier])) {
             return $reference;
         }
 
-        $containerAccessorIdentifier = sprintf('__%s__', $containerIdentifier);
+        $serviceIdentifier = preg_replace('/^__[^_]+__\.(.+)$/', '$1', (string) $reference);
 
+        return $this->transformReferenceToDefinition($container, $containerIdentifier, $serviceIdentifier);
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     * @param string $containerIdentifier
+     * @param string $serviceIdentifier
+     *
+     * @return Definition
+     */
+    private function transformReferenceToDefinition(ContainerBuilder $container, $containerIdentifier, $serviceIdentifier)
+    {
+        $containerAccessorIdentifier = sprintf('__%s__', $containerIdentifier);
         if (!$container->has($containerAccessorIdentifier)) {
             $container->set($containerAccessorIdentifier, $this->containerAccessors[$containerIdentifier]);
         }
-
-        $serviceIdentifier = preg_replace('/^__[^_]+__\.(.+)$/', '$1', (string) $reference);
 
         $definition = new Definition(null, [$serviceIdentifier]);
         $definition->setFactory([new Reference($containerAccessorIdentifier), 'getService']);
 
         return $definition;
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     */
+    private function copyParameters(ContainerBuilder $container)
+    {
+        foreach ($this->containerAccessors as $containerIdentifier => $containerAccessor) {
+            foreach ($containerAccessor->getParameters() as $name => $value) {
+                $container->setParameter(sprintf('__%s__.%s', $containerIdentifier, $name), $value);
+            }
+        }
     }
 }
