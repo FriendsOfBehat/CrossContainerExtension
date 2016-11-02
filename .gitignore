@@ -2,5 +2,9 @@
 /composer.lock
 
 /behat.yml
+/humbug.json
 /phpspec.yml
 /phpunit.xml
+
+/humbuglog.txt
+/humbuglog.json

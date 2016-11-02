@@ -25,5 +25,11 @@
     },
     "autoload": {
         "psr-4": { "FriendsOfBehat\\CrossContainerExtension\\": "src/" }
+    },
+    "autoload-dev": {
+        "psr-4" : {
+            "spec\\FriendsOfBehat\\CrossContainerExtension\\": "spec/",
+            "tests\\FriendsOfBehat\\CrossContainerExtension\\": "tests/"
+        }
     }
 }
