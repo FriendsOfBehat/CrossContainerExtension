@@ -17,18 +17,13 @@ final class ResolveCrossContainerReferencesPassTest extends \PHPUnit_Framework_T
     {
         $externalContainer = new ContainerBuilder();
         $externalContainer->setDefinition('array_object', new Definition(\ArrayObject::class, [['foo' => 'bar']]));
-        $externalContainer->compile();
 
         $baseContainer = new ContainerBuilder();
         $baseContainer->setDefinition('array_object', new Definition(\ArrayObject::class, [
             new Reference('__external__.array_object'),
         ]));
 
-        (new ResolveCrossContainerReferencesPass([
-            'external' => new ContainerBasedContainerAccessor($externalContainer),
-        ]))->process($baseContainer);
-
-        $baseContainer->compile();
+        $this->buildContainerWithDependencies($baseContainer, ['external' => $externalContainer]);
 
         static::assertTrue($baseContainer->has('array_object'));
         static::assertInstanceOf(\ArrayObject::class, $baseContainer->get('array_object'));
@@ -42,18 +37,13 @@ final class ResolveCrossContainerReferencesPassTest extends \PHPUnit_Framework_T
     {
         $externalContainer = new ContainerBuilder();
         $externalContainer->setDefinition('std_class', new Definition(\stdClass::class));
-        $externalContainer->compile();
 
         $baseContainer = new ContainerBuilder();
         $baseContainer->setDefinition('array_object', new Definition(\ArrayObject::class, [
             ['std_class' => new Reference('__external__.std_class')],
         ]));
 
-        (new ResolveCrossContainerReferencesPass([
-            'external' => new ContainerBasedContainerAccessor($externalContainer),
-        ]))->process($baseContainer);
-
-        $baseContainer->compile();
+        $this->buildContainerWithDependencies($baseContainer, ['external' => $externalContainer]);
 
         static::assertTrue($baseContainer->has('array_object'));
         static::assertInstanceOf(\ArrayObject::class, $baseContainer->get('array_object'));
@@ -67,18 +57,13 @@ final class ResolveCrossContainerReferencesPassTest extends \PHPUnit_Framework_T
     {
         $externalContainer = new ContainerBuilder();
         $externalContainer->setDefinition('std_class', new Definition(\stdClass::class));
-        $externalContainer->compile();
 
         $baseContainer = new ContainerBuilder();
         $baseContainer->setDefinition('array_object', new Definition(\ArrayObject::class, [
             ['std' => ['class' => new Reference('__external__.std_class')]],
         ]));
 
-        (new ResolveCrossContainerReferencesPass([
-            'external' => new ContainerBasedContainerAccessor($externalContainer),
-        ]))->process($baseContainer);
-
-        $baseContainer->compile();
+        $this->buildContainerWithDependencies($baseContainer, ['external' => $externalContainer]);
 
         static::assertTrue($baseContainer->has('array_object'));
         static::assertInstanceOf(\ArrayObject::class, $baseContainer->get('array_object'));
@@ -92,7 +77,6 @@ final class ResolveCrossContainerReferencesPassTest extends \PHPUnit_Framework_T
     {
         $externalContainer = new ContainerBuilder();
         $externalContainer->setDefinition('std_class', new Definition(\stdClass::class));
-        $externalContainer->compile();
 
         $baseContainer = new ContainerBuilder();
         $baseContainer->setDefinition('array_object', new Definition(\ArrayObject::class, [
@@ -101,11 +85,7 @@ final class ResolveCrossContainerReferencesPassTest extends \PHPUnit_Framework_T
             ]),
         ]));
 
-        (new ResolveCrossContainerReferencesPass([
-            'external' => new ContainerBasedContainerAccessor($externalContainer),
-        ]))->process($baseContainer);
-
-        $baseContainer->compile();
+        $this->buildContainerWithDependencies($baseContainer, ['external' => $externalContainer]);
 
         static::assertTrue($baseContainer->has('array_object'));
         static::assertInstanceOf(\ArrayObject::class, $baseContainer->get('array_object'));
@@ -119,16 +99,11 @@ final class ResolveCrossContainerReferencesPassTest extends \PHPUnit_Framework_T
     {
         $externalContainer = new ContainerBuilder();
         $externalContainer->setParameter('parameter', '42');
-        $externalContainer->compile();
 
         $baseContainer = new ContainerBuilder();
         $baseContainer->setParameter('parameter', '%__external__.parameter%');
 
-        (new ResolveCrossContainerReferencesPass([
-            'external' => new ContainerBasedContainerAccessor($externalContainer),
-        ]))->process($baseContainer);
-
-        $baseContainer->compile();
+        $this->buildContainerWithDependencies($baseContainer, ['external' => $externalContainer]);
 
         static::assertTrue($baseContainer->hasParameter('parameter'));
         static::assertSame('42', $baseContainer->getParameter('parameter'));
@@ -141,20 +116,34 @@ final class ResolveCrossContainerReferencesPassTest extends \PHPUnit_Framework_T
     {
         $externalContainer = new ContainerBuilder();
         $externalContainer->setParameter('parameter', '42');
-        $externalContainer->compile();
 
         $baseContainer = new ContainerBuilder();
         $baseContainer->setDefinition('array_object', new Definition(\ArrayObject::class, [
             ['parameter' => '%__external__.parameter%'],
         ]));
 
-        (new ResolveCrossContainerReferencesPass([
-            'external' => new ContainerBasedContainerAccessor($externalContainer),
-        ]))->process($baseContainer);
-
-        $baseContainer->compile();
+        $this->buildContainerWithDependencies($baseContainer, ['external' => $externalContainer]);
 
         static::assertTrue($baseContainer->hasDefinition('array_object'));
         static::assertSame(['parameter' => '42'], $baseContainer->get('array_object')->getArrayCopy());
+    }
+
+    /**
+     * @param ContainerBuilder $baseContainer
+     * @param ContainerBuilder[] $externalContainers
+     */
+    private function buildContainerWithDependencies(ContainerBuilder $baseContainer, array $externalContainers)
+    {
+        $accessors = [];
+        foreach ($externalContainers as $containerIdentifier => $container) {
+            $container->compile();
+
+            $accessors[$containerIdentifier] = new ContainerBasedContainerAccessor($container);
+        }
+
+        $crossContainerReferencesResolver = new ResolveCrossContainerReferencesPass($accessors);
+        $crossContainerReferencesResolver->process($baseContainer);
+
+        $baseContainer->compile();
     }
 }
