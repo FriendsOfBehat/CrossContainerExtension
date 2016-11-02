@@ -12,12 +12,12 @@
 namespace tests\FriendsOfBehat\CrossContainer\Extension;
 
 use FriendsOfBehat\CrossContainerExtension\ContainerBasedContainerAccessor;
-use FriendsOfBehat\CrossContainerExtension\ResolveCrossContainerReferencesPass;
+use FriendsOfBehat\CrossContainerExtension\CrossContainerProcessor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
-final class ResolveCrossContainerReferencesPassTest extends \PHPUnit_Framework_TestCase
+final class CrossContainerProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @test
@@ -125,7 +125,7 @@ final class ResolveCrossContainerReferencesPassTest extends \PHPUnit_Framework_T
             $accessors[$containerIdentifier] = new ContainerBasedContainerAccessor($container);
         }
 
-        $crossContainerReferencesResolver = new ResolveCrossContainerReferencesPass($accessors);
+        $crossContainerReferencesResolver = new CrossContainerProcessor($accessors);
         $crossContainerReferencesResolver->process($baseContainer);
 
         $baseContainer->compile();
