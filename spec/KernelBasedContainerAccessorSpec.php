@@ -13,7 +13,9 @@ namespace spec\FriendsOfBehat\CrossContainerExtension;
 
 use FriendsOfBehat\CrossContainerExtension\ContainerAccessor;
 use PhpSpec\ObjectBehavior;
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 final class KernelBasedContainerAccessorSpec extends ObjectBehavior
@@ -38,11 +40,18 @@ final class KernelBasedContainerAccessorSpec extends ObjectBehavior
         $this->getService('acme')->shouldReturn($service);
     }
 
-    function it_gets_a_parameter(KernelInterface $kernel, ContainerInterface $container)
+    function it_gets_parameters(KernelInterface $kernel, Container $container)
     {
         $kernel->getContainer()->willReturn($container);
-        $container->getParameter('acme')->willReturn('parameter value');
+        $container->getParameterBag()->willReturn(new ParameterBag(['name' => 'value']));
 
-        $this->getParameter('acme')->shouldReturn('parameter value');
+        $this->getParameters()->shouldReturn(['name' => 'value']);
+    }
+
+    function it_throws_an_exception_if_could_not_get_parameters(KernelInterface $kernel, ContainerInterface $container)
+    {
+        $kernel->getContainer()->willReturn($container);
+
+        $this->shouldThrow(\DomainException::class)->during('getParameters');
     }
 }

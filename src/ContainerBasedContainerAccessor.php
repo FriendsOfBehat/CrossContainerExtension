@@ -11,19 +11,19 @@
 
 namespace FriendsOfBehat\CrossContainerExtension;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\Container;
 
 final class ContainerBasedContainerAccessor implements ContainerAccessor
 {
     /**
-     * @var ContainerInterface
+     * @var Container
      */
     private $container;
 
     /**
-     * @param ContainerInterface $container
+     * @param Container $container
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(Container $container)
     {
         $this->container = $container;
     }
@@ -39,8 +39,8 @@ final class ContainerBasedContainerAccessor implements ContainerAccessor
     /**
      * {@inheritdoc}
      */
-    public function getParameter($id)
+    public function getParameters()
     {
-        return $this->container->getParameter($id);
+        return $this->container->getParameterBag()->all();
     }
 }

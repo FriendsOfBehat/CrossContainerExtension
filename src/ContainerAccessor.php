@@ -21,9 +21,7 @@ interface ContainerAccessor
     public function getService($id);
 
     /**
-     * @param string $id
-     *
-     * @return mixed
+     * @return array
      */
-    public function getParameter($id);
+    public function getParameters();
 }

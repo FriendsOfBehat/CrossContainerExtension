@@ -11,6 +11,7 @@
 
 namespace FriendsOfBehat\CrossContainerExtension;
 
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 final class KernelBasedContainerAccessor implements ContainerAccessor
@@ -39,8 +40,14 @@ final class KernelBasedContainerAccessor implements ContainerAccessor
     /**
      * {@inheritdoc}
      */
-    public function getParameter($id)
+    public function getParameters()
     {
-        return $this->kernel->getContainer()->getParameter($id);
+        $container = $this->kernel->getContainer();
+
+        if (!$container instanceof Container) {
+            throw new \DomainException('Could not get the parameters of kernel\'s container.');
+        }
+
+        return $container->getParameterBag()->all();
     }
 }

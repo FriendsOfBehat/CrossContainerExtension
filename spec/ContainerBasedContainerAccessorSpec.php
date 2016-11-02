@@ -13,11 +13,12 @@ namespace spec\FriendsOfBehat\CrossContainerExtension;
 
 use FriendsOfBehat\CrossContainerExtension\ContainerAccessor;
 use PhpSpec\ObjectBehavior;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
 final class ContainerBasedContainerAccessorSpec extends ObjectBehavior
 {
-    function let(ContainerInterface $container)
+    function let(Container $container)
     {
         $this->beConstructedWith($container);
     }
@@ -27,7 +28,7 @@ final class ContainerBasedContainerAccessorSpec extends ObjectBehavior
         $this->shouldImplement(ContainerAccessor::class);
     }
 
-    function it_gets_a_service(ContainerInterface $container)
+    function it_gets_a_service(Container $container)
     {
         $service = new \stdClass();
 
@@ -36,10 +37,10 @@ final class ContainerBasedContainerAccessorSpec extends ObjectBehavior
         $this->getService('acme')->shouldReturn($service);
     }
 
-    function it_gets_a_parameter(ContainerInterface $container)
+    function it_gets_parameters(Container $container)
     {
-        $container->getParameter('acme')->willReturn('parameter value');
+        $container->getParameterBag()->willReturn(new ParameterBag(['name' => 'value']));
 
-        $this->getParameter('acme')->shouldReturn('parameter value');
+        $this->getParameters()->shouldReturn(['name' => 'value']);
     }
 }
