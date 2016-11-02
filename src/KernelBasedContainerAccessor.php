@@ -34,7 +34,13 @@ final class KernelBasedContainerAccessor implements ContainerAccessor
      */
     public function getService($id)
     {
-        return $this->kernel->getContainer()->get($id);
+        $container = $this->kernel->getContainer();
+
+        if (!$container instanceof Container) {
+            throw new \DomainException('Could not get the parameters of kernel\'s container.');
+        }
+
+        return (new ContainerBasedContainerAccessor($container))->getService($id);
     }
 
     /**
@@ -48,6 +54,6 @@ final class KernelBasedContainerAccessor implements ContainerAccessor
             throw new \DomainException('Could not get the parameters of kernel\'s container.');
         }
 
-        return $container->getParameterBag()->all();
+        return (new ContainerBasedContainerAccessor($container))->getParameters();
     }
 }
