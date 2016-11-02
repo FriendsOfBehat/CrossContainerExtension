@@ -17,7 +17,7 @@ Makes possible to inject services and parameters from other containers.
     default:
         # ...
         extensions:
-            FriendsOfBehat\CrossContainerExtension: # TODO!
+            FriendsOfBehat\CrossContainerExtension: ~
     ```
 
-3. TODO!
+3. Use it together with [FriendsOfBehat\ContextServiceExtension](https://github.com/FriendsOfBehat/ContextServiceExtension) or [FriendsOfBehat\ServiceContainerExtension](https://github.com/FriendsOfBehat/ServiceContainerExtension).
