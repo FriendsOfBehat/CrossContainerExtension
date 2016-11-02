@@ -41,6 +41,9 @@ final class ContainerBasedContainerAccessor implements ContainerAccessor
      */
     public function getParameters()
     {
-        return $this->container->getParameterBag()->all();
+        $parameterBag = clone $this->container->getParameterBag();
+        $parameterBag->resolve();
+
+        return $parameterBag->all();
     }
 }

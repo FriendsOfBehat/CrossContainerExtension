@@ -30,7 +30,7 @@ final class KernelBasedContainerAccessorSpec extends ObjectBehavior
         $this->shouldImplement(ContainerAccessor::class);
     }
 
-    function it_gets_a_service(KernelInterface $kernel, ContainerInterface $container)
+    function it_gets_a_service(KernelInterface $kernel, Container $container)
     {
         $service = new \stdClass();
 
@@ -38,6 +38,13 @@ final class KernelBasedContainerAccessorSpec extends ObjectBehavior
         $container->get('acme')->willReturn($service);
 
         $this->getService('acme')->shouldReturn($service);
+    }
+
+    function it_throws_an_exception_if_could_not_get_service(KernelInterface $kernel, ContainerInterface $container)
+    {
+        $kernel->getContainer()->willReturn($container);
+
+        $this->shouldThrow(\DomainException::class)->during('getService', ['acme']);
     }
 
     function it_gets_parameters(KernelInterface $kernel, Container $container)
