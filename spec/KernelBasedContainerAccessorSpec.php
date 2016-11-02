@@ -47,9 +47,21 @@ final class KernelBasedContainerAccessorSpec extends ObjectBehavior
         $this->shouldThrow(\DomainException::class)->during('getService', ['acme']);
     }
 
-    function it_gets_parameters(KernelInterface $kernel, Container $container)
+    function it_gets_parameters_from_frozen_container(KernelInterface $kernel, Container $container)
     {
         $kernel->getContainer()->willReturn($container);
+
+        $container->isFrozen()->willReturn(true);
+        $container->getParameterBag()->willReturn(new ParameterBag(['name' => 'value']));
+
+        $this->getParameters()->shouldReturn(['name' => 'value']);
+    }
+
+    function it_gets_parameters_from_not_frozen_container(KernelInterface $kernel, Container $container)
+    {
+        $kernel->getContainer()->willReturn($container);
+
+        $container->isFrozen()->willReturn(false);
         $container->getParameterBag()->willReturn(new ParameterBag(['name' => 'value']));
 
         $this->getParameters()->shouldReturn(['name' => 'value']);

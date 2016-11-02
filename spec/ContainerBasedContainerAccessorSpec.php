@@ -37,8 +37,17 @@ final class ContainerBasedContainerAccessorSpec extends ObjectBehavior
         $this->getService('acme')->shouldReturn($service);
     }
 
-    function it_gets_parameters(Container $container)
+    function it_gets_parameters_from_frozen_container(Container $container)
     {
+        $container->isFrozen()->willReturn(true);
+        $container->getParameterBag()->willReturn(new ParameterBag(['name' => 'value']));
+
+        $this->getParameters()->shouldReturn(['name' => 'value']);
+    }
+
+    function it_gets_parameters_from_not_frozen_container(Container $container)
+    {
+        $container->isFrozen()->willReturn(false);
         $container->getParameterBag()->willReturn(new ParameterBag(['name' => 'value']));
 
         $this->getParameters()->shouldReturn(['name' => 'value']);
