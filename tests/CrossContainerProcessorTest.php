@@ -97,6 +97,23 @@ final class CrossContainerProcessorTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function it_resolves_cross_container_parameters_depending_on_another_parameters()
+    {
+        $externalContainer = new ContainerBuilder();
+        $externalContainer->setParameter('parameter', '%nested_parameter%');
+        $externalContainer->setParameter('nested_parameter', '42');
+
+        $baseContainer = new ContainerBuilder();
+        $baseContainer->setParameter('parameter', '%__external__.parameter%');
+
+        $this->buildContainerWithDependencies($baseContainer, ['external' => $externalContainer]);
+
+        static::assertSame('42', $baseContainer->getParameter('parameter'));
+    }
+
+    /**
+     * @test
+     */
     public function it_resolves_cross_container_parameters_in_service_definition_array()
     {
         $externalContainer = new ContainerBuilder();
@@ -120,8 +137,6 @@ final class CrossContainerProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $accessors = [];
         foreach ($externalContainers as $containerIdentifier => $container) {
-            $container->compile();
-
             $accessors[$containerIdentifier] = new ContainerBasedContainerAccessor($container);
         }
 
