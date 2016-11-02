@@ -26,9 +26,20 @@ final class CrossContainerProcessor implements CompilerPassInterface
     /**
      * @param ContainerAccessor[] $containerAccessors
      */
-    public function __construct(array $containerAccessors)
+    public function __construct(array $containerAccessors = [])
     {
-        $this->containerAccessors = $containerAccessors;
+        foreach ($containerAccessors as $containerIdentifier => $containerAccessor) {
+            $this->addContainerAccessor($containerIdentifier, $containerAccessor);
+        }
+    }
+
+    /**
+     * @param string $containerIdentifier
+     * @param ContainerAccessor $containerAccessor
+     */
+    public function addContainerAccessor($containerIdentifier, ContainerAccessor $containerAccessor)
+    {
+        $this->containerAccessors[$containerIdentifier] = $containerAccessor;
     }
 
     /**

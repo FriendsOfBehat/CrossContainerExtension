@@ -15,23 +15,33 @@ use Behat\Testwork\ServiceContainer\Extension;
 use Behat\Testwork\ServiceContainer\ExtensionManager;
 use FriendsOfBehat\CrossContainerExtension\ContainerAccessor;
 use FriendsOfBehat\CrossContainerExtension\ContainerBasedContainerAccessor;
+use FriendsOfBehat\CrossContainerExtension\CrossContainerProcessor;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
+/**
+ * @api
+ */
 final class CrossContainerExtension implements Extension
 {
     /**
-     * @var ContainerAccessor[]
+     * @var CrossContainerProcessor
      */
-    private $containers = [];
+    private $crossContainerProcessor;
+
+    public function __construct()
+    {
+        $this->crossContainerProcessor = new CrossContainerProcessor();
+    }
 
     /**
-     * @param string $containerIdentifier
-     * @param ContainerAccessor $containerAccessor
+     * @api
+     *
+     * @return CrossContainerProcessor
      */
-    public function addContainer($containerIdentifier, ContainerAccessor $containerAccessor)
+    public function getCrossContainerProcessor()
     {
-        $this->containers[$containerIdentifier] = $containerAccessor;
+        return $this->crossContainerProcessor;
     }
 
     /**
@@ -69,7 +79,7 @@ final class CrossContainerExtension implements Extension
      */
     public function load(ContainerBuilder $container, array $config)
     {
-        $this->containers['behat'] = new ContainerBasedContainerAccessor($container);
+        $this->crossContainerProcessor->addContainerAccessor('behat', new ContainerBasedContainerAccessor($container));
     }
 
     /**
