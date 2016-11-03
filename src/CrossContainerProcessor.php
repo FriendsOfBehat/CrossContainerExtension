@@ -62,8 +62,27 @@ final class CrossContainerProcessor implements CompilerPassInterface
     private function resolveDefinition(Definition $definition)
     {
         $definition->setArguments($this->resolveArguments($definition->getArguments()));
+        $definition->setFactory($this->resolveFactory($definition->getFactory()));
 
         return $definition;
+    }
+
+    /**
+     * @param array|null $factory
+     *
+     * @return array|null
+     */
+    private function resolveFactory($factory)
+    {
+        if ([] === $factory) {
+            return [];
+        }
+
+        if (isset($factory[0]) && $factory[0] instanceof Reference) {
+            $factory[0] = $this->resolveReference($factory[0]);
+        }
+
+        return $factory;
     }
 
     /**

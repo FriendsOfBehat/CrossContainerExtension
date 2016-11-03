@@ -81,6 +81,24 @@ final class CrossContainerProcessorTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function it_resolves_cross_container_references_in_service_factory()
+    {
+        $externalContainer = new ContainerBuilder();
+        $externalContainer->setDefinition('array_object_factory', new Definition(\ArrayObject::class, [['old' => 'old']]));
+
+        $baseContainer = new ContainerBuilder();
+        $baseContainer->setDefinition('array_object',
+            (new Definition(\ArrayObject::class, [['new' => 'new']]))->setFactory([new Reference('__external__.array_object_factory'), 'exchangeArray'])
+        );
+
+        $this->buildContainerWithDependencies($baseContainer, ['external' => $externalContainer]);
+
+        static::assertSame(['old' => 'old'], $baseContainer->get('array_object'));
+    }
+
+    /**
+     * @test
+     */
     public function it_resolves_cross_container_parameters_inline_in_parameter()
     {
         $externalContainer = new ContainerBuilder();
