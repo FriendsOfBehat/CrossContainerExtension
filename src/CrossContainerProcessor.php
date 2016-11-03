@@ -48,93 +48,83 @@ final class CrossContainerProcessor implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         foreach ($container->getDefinitions() as $identifier => $definition) {
-            $container->setDefinition($identifier, $this->resolveDefinition($container, $definition));
+            $container->setDefinition($identifier, $this->resolveDefinition($definition));
         }
 
         $this->copyParameters($container);
     }
 
     /**
-     * @param ContainerBuilder $container
      * @param Definition $definition
      *
      * @return Definition
      */
-    private function resolveDefinition(ContainerBuilder $container, Definition $definition)
+    private function resolveDefinition(Definition $definition)
     {
-        $definition->setArguments($this->resolveArguments($container, $definition->getArguments()));
+        $definition->setArguments($this->resolveArguments($definition->getArguments()));
 
         return $definition;
     }
 
     /**
-     * @param ContainerBuilder $container
      * @param array $arguments
      *
      * @return array
      */
-    private function resolveArguments(ContainerBuilder $container, array $arguments)
+    private function resolveArguments(array $arguments)
     {
-        return array_map(function ($argument) use ($container) {
-            return $this->resolveArgument($container, $argument);
+        return array_map(function ($argument){
+            return $this->resolveArgument($argument);
         }, $arguments);
     }
 
     /**
-     * @param ContainerBuilder $container
      * @param mixed $argument
      *
      * @return mixed
      */
-    private function resolveArgument(ContainerBuilder $container, $argument)
+    private function resolveArgument($argument)
     {
         if ($argument instanceof Definition) {
-            return $this->resolveDefinition($container, $argument);
+            return $this->resolveDefinition($argument);
         }
 
         if ($argument instanceof Reference) {
-            return $this->resolveReference($container, $argument);
+            return $this->resolveReference($argument);
         }
 
         if (is_array($argument)) {
-            return $this->resolveArguments($container, $argument);
+            return $this->resolveArguments($argument);
         }
 
         return $argument;
     }
 
     /**
-     * @param ContainerBuilder $container
      * @param Reference $reference
      *
      * @return Definition|Reference
      */
-    private function resolveReference(ContainerBuilder $container, Reference $reference)
+    private function resolveReference(Reference $reference)
     {
         if (!ExternalReference::isValid($reference)) {
             return $reference;
         }
 
-        return $this->transformReferenceToDefinition($container, new ExternalReference($reference));
+        return $this->transformReferenceToDefinition(new ExternalReference($reference));
     }
 
     /**
-     * @param ContainerBuilder $container
      * @param ExternalReference $externalReference
      *
      * @return Definition
      */
-    private function transformReferenceToDefinition(ContainerBuilder $container, ExternalReference $externalReference)
+    private function transformReferenceToDefinition(ExternalReference $externalReference)
     {
         $this->assertExternalReferenceHasKnownContainer($externalReference);
 
-        $containerAccessorIdentifier = sprintf('__%s__', $externalReference->containerIdentifier());
-        if (!$container->has($containerAccessorIdentifier)) {
-            $container->set($containerAccessorIdentifier, $this->containerAccessors[$externalReference->containerIdentifier()]);
-        }
-
         $definition = new Definition(null, [$externalReference->serviceIdentifier()]);
-        $definition->setFactory([new Reference($containerAccessorIdentifier), 'getService']);
+        $definition->setFactory([$this->containerAccessors[$externalReference->containerIdentifier()], 'getService']);
 
         return $definition;
     }
