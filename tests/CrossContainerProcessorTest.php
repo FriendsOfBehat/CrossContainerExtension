@@ -13,11 +13,13 @@ namespace tests\FriendsOfBehat\CrossContainer\Extension;
 
 use FriendsOfBehat\CrossContainerExtension\ContainerBasedContainerAccessor;
 use FriendsOfBehat\CrossContainerExtension\CrossContainerProcessor;
+use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
-final class CrossContainerProcessorTest extends \PHPUnit_Framework_TestCase
+final class CrossContainerProcessorTest extends TestCase
 {
     /**
      * @test
@@ -34,8 +36,8 @@ final class CrossContainerProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->buildContainerWithDependencies($baseContainer, ['external' => $externalContainer]);
 
-        static::assertInstanceOf(\ArrayObject::class, $baseContainer->get('array_object'));
-        static::assertSame(['foo' => 'bar'], $baseContainer->get('array_object')->getArrayCopy());
+        Assert::assertInstanceOf(\ArrayObject::class, $baseContainer->get('array_object'));
+        Assert::assertSame(['foo' => 'bar'], $baseContainer->get('array_object')->getArrayCopy());
     }
 
     /**
@@ -53,8 +55,8 @@ final class CrossContainerProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->buildContainerWithDependencies($baseContainer, ['external' => $externalContainer]);
 
-        static::assertInstanceOf(\ArrayObject::class, $baseContainer->get('array_object'));
-        static::assertInstanceOf(\stdClass::class, $baseContainer->get('array_object')['std']['class']);
+        Assert::assertInstanceOf(\ArrayObject::class, $baseContainer->get('array_object'));
+        Assert::assertInstanceOf(\stdClass::class, $baseContainer->get('array_object')['std']['class']);
     }
 
     /**
@@ -74,8 +76,8 @@ final class CrossContainerProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->buildContainerWithDependencies($baseContainer, ['external' => $externalContainer]);
 
-        static::assertInstanceOf(\ArrayObject::class, $baseContainer->get('array_object'));
-        static::assertInstanceOf(\stdClass::class, $baseContainer->get('array_object')->getArrayCopy()['std_class']);
+        Assert::assertInstanceOf(\ArrayObject::class, $baseContainer->get('array_object'));
+        Assert::assertInstanceOf(\stdClass::class, $baseContainer->get('array_object')->getArrayCopy()['std_class']);
     }
 
     /**
@@ -93,7 +95,7 @@ final class CrossContainerProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->buildContainerWithDependencies($baseContainer, ['external' => $externalContainer]);
 
-        static::assertSame(['old' => 'old'], $baseContainer->get('array_object'));
+        Assert::assertSame(['old' => 'old'], $baseContainer->get('array_object'));
     }
 
     /**
@@ -109,7 +111,7 @@ final class CrossContainerProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->buildContainerWithDependencies($baseContainer, ['external' => $externalContainer]);
 
-        static::assertSame('42', $baseContainer->getParameter('parameter'));
+        Assert::assertSame('42', $baseContainer->getParameter('parameter'));
     }
 
     /**
@@ -126,7 +128,7 @@ final class CrossContainerProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->buildContainerWithDependencies($baseContainer, ['external' => $externalContainer]);
 
-        static::assertSame('42', $baseContainer->getParameter('parameter'));
+        Assert::assertSame('42', $baseContainer->getParameter('parameter'));
     }
 
     /**
@@ -144,7 +146,7 @@ final class CrossContainerProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->buildContainerWithDependencies($baseContainer, ['external' => $externalContainer]);
 
-        static::assertSame(['parameter' => '42'], $baseContainer->get('array_object')->getArrayCopy());
+        Assert::assertSame(['parameter' => '42'], $baseContainer->get('array_object')->getArrayCopy());
     }
 
     /**
@@ -160,7 +162,7 @@ final class CrossContainerProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->buildContainerWithDependencies($baseContainer, ['external' => $externalContainer]);
 
-        static::assertSame('%s?%s', $baseContainer->getParameter('parameter'));
+        Assert::assertSame('%s?%s', $baseContainer->getParameter('parameter'));
     }
 
     /**
