@@ -47,9 +47,9 @@ final class CrossContainerProcessor implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        foreach ($container->getDefinitions() as $identifier => $definition) {
-            $container->setDefinition($identifier, $this->resolveDefinition($definition));
-        }
+        $container->addDefinitions(array_map(function (Definition $definition) {
+            return $this->resolveDefinition($definition);
+        }, $container->getDefinitions()));
 
         $this->copyParameters($container);
     }
