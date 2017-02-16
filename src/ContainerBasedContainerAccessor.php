@@ -41,13 +41,17 @@ final class ContainerBasedContainerAccessor implements ContainerAccessor
      */
     public function getParameters()
     {
+        $parameterBag = $this->container->getParameterBag();
         if (!$this->container->isFrozen()) {
-            $parameterBag = clone $this->container->getParameterBag();
+            $parameterBag = clone $parameterBag;
             $parameterBag->resolve();
 
-            return $parameterBag->all();
+            // Values are automatically unescaped during resolving, need to revert it
+            $parameterBag->add(array_map(function ($unescapedValue) use ($parameterBag) {
+                return $parameterBag->escapeValue($unescapedValue);
+            }, $parameterBag->all()));
         }
 
-        return $this->container->getParameterBag()->all();
+        return $parameterBag->all();
     }
 }

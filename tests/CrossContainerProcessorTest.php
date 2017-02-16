@@ -153,14 +153,14 @@ final class CrossContainerProcessorTest extends \PHPUnit_Framework_TestCase
     public function it_resolves_cross_container_escaped_parameters()
     {
         $externalContainer = new ContainerBuilder();
-        $externalContainer->setParameter('parameter', '%%s?%%s'); // stands for %s?%s
+        $externalContainer->setParameter('parameter', '%%s?%%s');
 
         $baseContainer = new ContainerBuilder();
         $baseContainer->setParameter('parameter', '%__external__.parameter%');
 
         $this->buildContainerWithDependencies($baseContainer, ['external' => $externalContainer]);
 
-        static::assertSame('42', $baseContainer->getParameter('parameter'));
+        static::assertSame('%s?%s', $baseContainer->getParameter('parameter'));
     }
 
     /**
