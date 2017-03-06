@@ -63,6 +63,7 @@ final class CrossContainerProcessor implements CompilerPassInterface
     {
         $definition->setArguments($this->resolveArguments($definition->getArguments()));
         $definition->setFactory($this->resolveFactory($definition->getFactory()));
+        $definition->setMethodCalls($this->resolveMethodCalls($definition->getMethodCalls()));
 
         return $definition;
     }
@@ -86,13 +87,25 @@ final class CrossContainerProcessor implements CompilerPassInterface
     }
 
     /**
+     * @param array $methodCalls
+     *
+     * @return array
+     */
+    private function resolveMethodCalls(array $methodCalls)
+    {
+        return array_map(function (array $methodCall) {
+            return [$methodCall[0], $this->resolveArguments($methodCall[1])];
+        }, $methodCalls);
+    }
+
+    /**
      * @param array $arguments
      *
      * @return array
      */
     private function resolveArguments(array $arguments)
     {
-        return array_map(function ($argument){
+        return array_map(function ($argument) {
             return $this->resolveArgument($argument);
         }, $arguments);
     }
