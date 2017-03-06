@@ -166,6 +166,23 @@ final class CrossContainerProcessorTest extends TestCase
     }
 
     /**
+     * @test
+     */
+    public function it_resolves_cross_container_references_in_method_calls()
+    {
+        $externalContainer = new ContainerBuilder();
+        $externalContainer->setDefinition('array_object', new Definition(\ArrayObject::class, [['foo' => 'bar']]));
+
+        $baseContainer = new ContainerBuilder();
+        $baseContainer->setDefinition('array_object', (new Definition(\ArrayObject::class, [[]]))->addMethodCall('exchangeArray', [new Reference('__external__.array_object')]));
+
+        $this->buildContainerWithDependencies($baseContainer, ['external' => $externalContainer]);
+
+        Assert::assertInstanceOf(\ArrayObject::class, $baseContainer->get('array_object'));
+        Assert::assertSame(['foo' => 'bar'], $baseContainer->get('array_object')->getArrayCopy());
+    }
+
+    /**
      * @param ContainerBuilder $baseContainer
      * @param ContainerBuilder[] $externalContainers
      */
