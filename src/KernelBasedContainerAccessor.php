@@ -37,7 +37,7 @@ final class KernelBasedContainerAccessor implements ContainerAccessor
         $container = $this->kernel->getContainer();
 
         if (!$container instanceof Container) {
-            throw new \DomainException('Could not get the parameters of kernel\'s container.');
+            throw new \DomainException('Could not get the services of kernel\'s container.');
         }
 
         return (new ContainerBasedContainerAccessor($container))->getService($id);
