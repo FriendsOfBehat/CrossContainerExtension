@@ -15,7 +15,6 @@ namespace FriendsOfBehat\CrossContainerExtension\ServiceContainer;
 
 use Behat\Testwork\ServiceContainer\Extension;
 use Behat\Testwork\ServiceContainer\ExtensionManager;
-use FriendsOfBehat\CrossContainerExtension\ContainerAccessor;
 use FriendsOfBehat\CrossContainerExtension\ContainerBasedContainerAccessor;
 use FriendsOfBehat\CrossContainerExtension\CrossContainerProcessor;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
