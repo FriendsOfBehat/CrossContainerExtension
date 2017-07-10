@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the CrossContainerExtension package.
  *
@@ -39,7 +41,7 @@ final class CrossContainerExtension implements Extension
      *
      * @return CrossContainerProcessor
      */
-    public function getCrossContainerProcessor()
+    public function getCrossContainerProcessor(): CrossContainerProcessor
     {
         return $this->crossContainerProcessor;
     }
@@ -49,7 +51,7 @@ final class CrossContainerExtension implements Extension
      *
      * {@inheritdoc}
      */
-    public function getConfigKey()
+    public function getConfigKey(): string
     {
         return 'fob_cross_container';
     }
@@ -59,7 +61,7 @@ final class CrossContainerExtension implements Extension
      *
      * {@inheritdoc}
      */
-    public function initialize(ExtensionManager $extensionManager)
+    public function initialize(ExtensionManager $extensionManager): void
     {
     }
 
@@ -68,7 +70,7 @@ final class CrossContainerExtension implements Extension
      *
      * {@inheritdoc}
      */
-    public function configure(ArrayNodeDefinition $builder)
+    public function configure(ArrayNodeDefinition $builder): void
     {
     }
 
@@ -77,7 +79,7 @@ final class CrossContainerExtension implements Extension
      *
      * {@inheritdoc}
      */
-    public function load(ContainerBuilder $container, array $config)
+    public function load(ContainerBuilder $container, array $config): void
     {
         $this->crossContainerProcessor->addContainerAccessor('behat', new ContainerBasedContainerAccessor($container));
     }
@@ -87,7 +89,7 @@ final class CrossContainerExtension implements Extension
      *
      * {@inheritdoc}
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
     }
 }

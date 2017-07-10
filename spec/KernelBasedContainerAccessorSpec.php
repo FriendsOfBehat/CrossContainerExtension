@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the CrossContainerExtension package.
  *
@@ -20,17 +22,17 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 final class KernelBasedContainerAccessorSpec extends ObjectBehavior
 {
-    function let(KernelInterface $kernel)
+    function let(KernelInterface $kernel): void
     {
         $this->beConstructedWith($kernel);
     }
 
-    function it_is_a_container_accessor()
+    function it_is_a_container_accessor(): void
     {
         $this->shouldImplement(ContainerAccessor::class);
     }
 
-    function it_gets_a_service(KernelInterface $kernel, Container $container)
+    function it_gets_a_service(KernelInterface $kernel, Container $container): void
     {
         $service = new \stdClass();
 
@@ -40,14 +42,14 @@ final class KernelBasedContainerAccessorSpec extends ObjectBehavior
         $this->getService('acme')->shouldReturn($service);
     }
 
-    function it_throws_an_exception_if_could_not_get_service(KernelInterface $kernel, ContainerInterface $container)
+    function it_throws_an_exception_if_could_not_get_service(KernelInterface $kernel, ContainerInterface $container): void
     {
         $kernel->getContainer()->willReturn($container);
 
         $this->shouldThrow(\DomainException::class)->during('getService', ['acme']);
     }
 
-    function it_gets_parameters_from_frozen_container(KernelInterface $kernel, Container $container)
+    function it_gets_parameters_from_frozen_container(KernelInterface $kernel, Container $container): void
     {
         $kernel->getContainer()->willReturn($container);
 
@@ -57,7 +59,7 @@ final class KernelBasedContainerAccessorSpec extends ObjectBehavior
         $this->getParameters()->shouldReturn(['name' => 'value']);
     }
 
-    function it_gets_parameters_from_not_frozen_container(KernelInterface $kernel, Container $container)
+    function it_gets_parameters_from_not_frozen_container(KernelInterface $kernel, Container $container): void
     {
         $kernel->getContainer()->willReturn($container);
 
@@ -67,7 +69,7 @@ final class KernelBasedContainerAccessorSpec extends ObjectBehavior
         $this->getParameters()->shouldReturn(['name' => 'value']);
     }
 
-    function it_throws_an_exception_if_could_not_get_parameters(KernelInterface $kernel, ContainerInterface $container)
+    function it_throws_an_exception_if_could_not_get_parameters(KernelInterface $kernel, ContainerInterface $container): void
     {
         $kernel->getContainer()->willReturn($container);
 

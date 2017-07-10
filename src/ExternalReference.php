@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the CrossContainerExtension package.
  *
@@ -51,7 +53,7 @@ final class ExternalReference
      *
      * @return bool
      */
-    public static function isValid($identifier)
+    public static function isValid($identifier): bool
     {
         try {
             new static($identifier);
@@ -65,7 +67,7 @@ final class ExternalReference
     /**
      * @return string
      */
-    public function containerIdentifier()
+    public function containerIdentifier(): string
     {
         return $this->containerIdentifier;
     }
@@ -73,7 +75,7 @@ final class ExternalReference
     /**
      * @return string
      */
-    public function serviceIdentifier()
+    public function serviceIdentifier(): string
     {
         return $this->serviceIdentifier;
     }
