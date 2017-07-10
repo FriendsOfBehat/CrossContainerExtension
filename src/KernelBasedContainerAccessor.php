@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the CrossContainerExtension package.
  *
@@ -32,7 +34,7 @@ final class KernelBasedContainerAccessor implements ContainerAccessor
     /**
      * {@inheritdoc}
      */
-    public function getService($id)
+    public function getService(string $id)
     {
         $container = $this->kernel->getContainer();
 
@@ -46,7 +48,7 @@ final class KernelBasedContainerAccessor implements ContainerAccessor
     /**
      * {@inheritdoc}
      */
-    public function getParameters()
+    public function getParameters(): array
     {
         $container = $this->kernel->getContainer();
 

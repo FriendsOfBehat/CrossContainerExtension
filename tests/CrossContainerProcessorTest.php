@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the CrossContainerExtension package.
  *
@@ -24,7 +26,7 @@ final class CrossContainerProcessorTest extends TestCase
     /**
      * @test
      */
-    public function it_resolves_cross_container_references_in_service_argument()
+    public function it_resolves_cross_container_references_in_service_argument(): void
     {
         $externalContainer = new ContainerBuilder();
         $externalContainer->setDefinition('array_object', new Definition(\ArrayObject::class, [['foo' => 'bar']]));
@@ -43,7 +45,7 @@ final class CrossContainerProcessorTest extends TestCase
     /**
      * @test
      */
-    public function it_resolves_cross_container_references_in_service_argument_array()
+    public function it_resolves_cross_container_references_in_service_argument_array(): void
     {
         $externalContainer = new ContainerBuilder();
         $externalContainer->setDefinition('std_class', new Definition(\stdClass::class));
@@ -62,7 +64,7 @@ final class CrossContainerProcessorTest extends TestCase
     /**
      * @test
      */
-    public function it_resolves_cross_container_references_in_service_argument_anonymous_definition()
+    public function it_resolves_cross_container_references_in_service_argument_anonymous_definition(): void
     {
         $externalContainer = new ContainerBuilder();
         $externalContainer->setDefinition('std_class', new Definition(\stdClass::class));
@@ -83,7 +85,7 @@ final class CrossContainerProcessorTest extends TestCase
     /**
      * @test
      */
-    public function it_resolves_cross_container_references_in_service_factory()
+    public function it_resolves_cross_container_references_in_service_factory(): void
     {
         $externalContainer = new ContainerBuilder();
         $externalContainer->setDefinition('array_object_factory', new Definition(\ArrayObject::class, [['old' => 'old']]));
@@ -101,7 +103,7 @@ final class CrossContainerProcessorTest extends TestCase
     /**
      * @test
      */
-    public function it_resolves_cross_container_parameters_inline_in_parameter()
+    public function it_resolves_cross_container_parameters_inline_in_parameter(): void
     {
         $externalContainer = new ContainerBuilder();
         $externalContainer->setParameter('parameter', '42');
@@ -117,7 +119,7 @@ final class CrossContainerProcessorTest extends TestCase
     /**
      * @test
      */
-    public function it_resolves_cross_container_parameters_depending_on_another_parameters()
+    public function it_resolves_cross_container_parameters_depending_on_another_parameters(): void
     {
         $externalContainer = new ContainerBuilder();
         $externalContainer->setParameter('parameter', '%nested_parameter%');
@@ -134,7 +136,7 @@ final class CrossContainerProcessorTest extends TestCase
     /**
      * @test
      */
-    public function it_resolves_cross_container_parameters_in_service_definition_array()
+    public function it_resolves_cross_container_parameters_in_service_definition_array(): void
     {
         $externalContainer = new ContainerBuilder();
         $externalContainer->setParameter('parameter', '42');
@@ -152,7 +154,7 @@ final class CrossContainerProcessorTest extends TestCase
     /**
      * @test
      */
-    public function it_resolves_cross_container_escaped_parameters()
+    public function it_resolves_cross_container_escaped_parameters(): void
     {
         $externalContainer = new ContainerBuilder();
         $externalContainer->setParameter('parameter', '%%s?%%s');
@@ -168,7 +170,7 @@ final class CrossContainerProcessorTest extends TestCase
     /**
      * @test
      */
-    public function it_resolves_cross_container_references_in_method_calls()
+    public function it_resolves_cross_container_references_in_method_calls(): void
     {
         $externalContainer = new ContainerBuilder();
         $externalContainer->setDefinition('array_object', new Definition(\ArrayObject::class, [['foo' => 'bar']]));
@@ -186,7 +188,7 @@ final class CrossContainerProcessorTest extends TestCase
      * @param ContainerBuilder $baseContainer
      * @param ContainerBuilder[] $externalContainers
      */
-    private function buildContainerWithDependencies(ContainerBuilder $baseContainer, array $externalContainers)
+    private function buildContainerWithDependencies(ContainerBuilder $baseContainer, array $externalContainers): void
     {
         $accessors = [];
         foreach ($externalContainers as $containerIdentifier => $container) {

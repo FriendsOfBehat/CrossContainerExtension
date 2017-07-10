@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the CrossContainerExtension package.
  *
@@ -15,12 +17,12 @@ use PhpSpec\ObjectBehavior;
 
 final class ExternalReferenceSpec extends ObjectBehavior
 {
-    function let()
+    function let(): void
     {
         $this->beConstructedWith('__container_identifier__.service_identifier');
     }
 
-    function it_returns_whether_it_is_valid()
+    function it_returns_whether_it_is_valid(): void
     {
         static::isValid('not_valid')->shouldReturn(false);
         static::isValid('__not.valid')->shouldReturn(false);
@@ -32,13 +34,13 @@ final class ExternalReferenceSpec extends ObjectBehavior
         static::isValid('__still__valid__.indeed')->shouldReturn(true);
     }
 
-    function it_returns_container_and_service_identifiers()
+    function it_returns_container_and_service_identifiers(): void
     {
         $this->containerIdentifier()->shouldReturn('container_identifier');
         $this->serviceIdentifier()->shouldReturn('service_identifier');
     }
 
-    function it_throws_an_exception_if_trying_to_create_with_invalid_identifier()
+    function it_throws_an_exception_if_trying_to_create_with_invalid_identifier(): void
     {
         $this->beConstructedWith('__not.valid__');
 

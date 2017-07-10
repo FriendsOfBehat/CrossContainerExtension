@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the CrossContainerExtension package.
  *
@@ -37,7 +39,7 @@ final class CrossContainerProcessor implements CompilerPassInterface
      * @param string $containerIdentifier
      * @param ContainerAccessor $containerAccessor
      */
-    public function addContainerAccessor($containerIdentifier, ContainerAccessor $containerAccessor)
+    public function addContainerAccessor(string $containerIdentifier, ContainerAccessor $containerAccessor): void
     {
         $this->containerAccessors[$containerIdentifier] = $containerAccessor;
     }
@@ -45,7 +47,7 @@ final class CrossContainerProcessor implements CompilerPassInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $container->addDefinitions(array_map(function (Definition $definition) {
             return $this->resolveDefinition($definition);
@@ -59,7 +61,7 @@ final class CrossContainerProcessor implements CompilerPassInterface
      *
      * @return Definition
      */
-    private function resolveDefinition(Definition $definition)
+    private function resolveDefinition(Definition $definition): Definition
     {
         $definition->setArguments($this->resolveArguments($definition->getArguments()));
         $definition->setFactory($this->resolveFactory($definition->getFactory()));
@@ -73,7 +75,7 @@ final class CrossContainerProcessor implements CompilerPassInterface
      *
      * @return array|null
      */
-    private function resolveFactory($factory)
+    private function resolveFactory(?array $factory): ?array
     {
         if ([] === $factory) {
             return [];
@@ -91,7 +93,7 @@ final class CrossContainerProcessor implements CompilerPassInterface
      *
      * @return array
      */
-    private function resolveMethodCalls(array $methodCalls)
+    private function resolveMethodCalls(array $methodCalls): array
     {
         return array_map(function (array $methodCall) {
             return [$methodCall[0], $this->resolveArguments($methodCall[1])];
@@ -103,7 +105,7 @@ final class CrossContainerProcessor implements CompilerPassInterface
      *
      * @return array
      */
-    private function resolveArguments(array $arguments)
+    private function resolveArguments(array $arguments): array
     {
         return array_map(function ($argument) {
             return $this->resolveArgument($argument);
@@ -151,7 +153,7 @@ final class CrossContainerProcessor implements CompilerPassInterface
      *
      * @return Definition
      */
-    private function transformReferenceToDefinition(ExternalReference $externalReference)
+    private function transformReferenceToDefinition(ExternalReference $externalReference): Definition
     {
         $this->assertExternalReferenceHasKnownContainer($externalReference);
 
@@ -166,7 +168,7 @@ final class CrossContainerProcessor implements CompilerPassInterface
      *
      * @throws \DomainException
      */
-    private function assertExternalReferenceHasKnownContainer(ExternalReference $externalReference)
+    private function assertExternalReferenceHasKnownContainer(ExternalReference $externalReference): void
     {
         if (!isset($this->containerAccessors[$externalReference->containerIdentifier()])) {
             throw new \DomainException(sprintf(
@@ -179,7 +181,7 @@ final class CrossContainerProcessor implements CompilerPassInterface
     /**
      * @param ContainerBuilder $container
      */
-    private function copyParameters(ContainerBuilder $container)
+    private function copyParameters(ContainerBuilder $container): void
     {
         foreach ($this->containerAccessors as $containerIdentifier => $containerAccessor) {
             foreach ($containerAccessor->getParameters() as $name => $value) {
