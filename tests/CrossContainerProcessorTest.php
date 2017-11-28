@@ -170,6 +170,23 @@ final class CrossContainerProcessorTest extends TestCase
     /**
      * @test
      */
+    public function it_resolves_cross_container_escaped_parameters_symfony_kernel(): void
+    {
+        $externalContainer = new ContainerBuilder();
+        $externalContainer->setParameter('parameter', 'testParam1-%%s-%%s');
+        $externalContainer->compile();
+
+        $baseContainer = new ContainerBuilder();
+        $baseContainer->setParameter('parameter', '%__external__.parameter%');
+
+        $this->buildContainerWithDependencies($baseContainer, ['external' => $externalContainer]);
+
+        Assert::assertSame('testParam1-%s-%s', $baseContainer->getParameter('parameter'));
+    }
+
+    /**
+     * @test
+     */
     public function it_resolves_cross_container_references_in_method_calls(): void
     {
         $externalContainer = new ContainerBuilder();
