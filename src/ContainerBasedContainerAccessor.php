@@ -45,7 +45,7 @@ final class ContainerBasedContainerAccessor implements ContainerAccessor
     {
         $parameterBag = $this->container->getParameterBag();
 
-        if (!$this->container->isFrozen()) {
+        if (!$this->container->isCompiled()) {
             $parameterBag = clone $parameterBag;
             $parameterBag->resolve();
         }
