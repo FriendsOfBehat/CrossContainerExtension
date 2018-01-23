@@ -53,7 +53,7 @@ final class KernelBasedContainerAccessorSpec extends ObjectBehavior
     {
         $kernel->getContainer()->willReturn($container);
 
-        $container->isFrozen()->willReturn(true);
+        $container->isCompiled()->willReturn(true);
         $container->getParameterBag()->willReturn(new ParameterBag(['name' => 'value']));
 
         $this->getParameters()->shouldReturn(['name' => 'value']);
@@ -63,7 +63,7 @@ final class KernelBasedContainerAccessorSpec extends ObjectBehavior
     {
         $kernel->getContainer()->willReturn($container);
 
-        $container->isFrozen()->willReturn(false);
+        $container->isCompiled()->willReturn(false);
         $container->getParameterBag()->willReturn(new ParameterBag(['name' => 'value']));
 
         $this->getParameters()->shouldReturn(['name' => 'value']);
