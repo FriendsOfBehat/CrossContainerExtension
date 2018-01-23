@@ -29,12 +29,12 @@ final class CrossContainerProcessorTest extends TestCase
     public function it_resolves_cross_container_references_in_service_argument(): void
     {
         $externalContainer = new ContainerBuilder();
-        $externalContainer->setDefinition('array_object', new Definition(\ArrayObject::class, [['foo' => 'bar']]));
+        $externalContainer->setDefinition('array_object', (new Definition(\ArrayObject::class, [['foo' => 'bar']]))->setPublic(true));
 
         $baseContainer = new ContainerBuilder();
-        $baseContainer->setDefinition('array_object', new Definition(\ArrayObject::class, [
+        $baseContainer->setDefinition('array_object', (new Definition(\ArrayObject::class, [
             new Reference('__external__.array_object'),
-        ]));
+        ]))->setPublic(true));
 
         $this->buildContainerWithDependencies($baseContainer, ['external' => $externalContainer]);
 
@@ -48,12 +48,12 @@ final class CrossContainerProcessorTest extends TestCase
     public function it_resolves_cross_container_references_in_service_argument_array(): void
     {
         $externalContainer = new ContainerBuilder();
-        $externalContainer->setDefinition('std_class', new Definition(\stdClass::class));
+        $externalContainer->setDefinition('std_class', (new Definition(\stdClass::class))->setPublic(true));
 
         $baseContainer = new ContainerBuilder();
-        $baseContainer->setDefinition('array_object', new Definition(\ArrayObject::class, [
+        $baseContainer->setDefinition('array_object', (new Definition(\ArrayObject::class, [
             ['std' => ['class' => new Reference('__external__.std_class')]],
-        ]));
+        ]))->setPublic(true));
 
         $this->buildContainerWithDependencies($baseContainer, ['external' => $externalContainer]);
 
@@ -67,14 +67,14 @@ final class CrossContainerProcessorTest extends TestCase
     public function it_resolves_cross_container_references_in_service_argument_anonymous_definition(): void
     {
         $externalContainer = new ContainerBuilder();
-        $externalContainer->setDefinition('std_class', new Definition(\stdClass::class));
+        $externalContainer->setDefinition('std_class', (new Definition(\stdClass::class))->setPublic(true));
 
         $baseContainer = new ContainerBuilder();
-        $baseContainer->setDefinition('array_object', new Definition(\ArrayObject::class, [
+        $baseContainer->setDefinition('array_object', (new Definition(\ArrayObject::class, [
             new Definition(\ArrayObject::class, [
                 ['std_class' => new Reference('__external__.std_class')],
             ]),
-        ]));
+        ]))->setPublic(true));
 
         $this->buildContainerWithDependencies($baseContainer, ['external' => $externalContainer]);
 
@@ -88,11 +88,14 @@ final class CrossContainerProcessorTest extends TestCase
     public function it_resolves_cross_container_references_in_service_factory(): void
     {
         $externalContainer = new ContainerBuilder();
-        $externalContainer->setDefinition('array_object_factory', new Definition(\ArrayObject::class, [['old' => 'old']]));
+        $externalContainer->setDefinition('array_object_factory', (new Definition(\ArrayObject::class, [['old' => 'old']]))->setPublic(true));
 
         $baseContainer = new ContainerBuilder();
-        $baseContainer->setDefinition('array_object',
-            (new Definition(\ArrayObject::class, [['new' => 'new']]))->setFactory([new Reference('__external__.array_object_factory'), 'exchangeArray'])
+        $baseContainer->setDefinition(
+            'array_object',
+            (new Definition(\ArrayObject::class, [['new' => 'new']]))
+                ->setFactory([new Reference('__external__.array_object_factory'), 'exchangeArray'])
+                ->setPublic(true)
         );
 
         $this->buildContainerWithDependencies($baseContainer, ['external' => $externalContainer]);
@@ -142,9 +145,11 @@ final class CrossContainerProcessorTest extends TestCase
         $externalContainer->setParameter('parameter', '42');
 
         $baseContainer = new ContainerBuilder();
-        $baseContainer->setDefinition('array_object', new Definition(\ArrayObject::class, [
-            ['parameter' => '%__external__.parameter%'],
-        ]));
+        $baseContainer->setDefinition(
+            'array_object',
+            (new Definition(\ArrayObject::class, [['parameter' => '%__external__.parameter%']]))
+                ->setPublic(true)
+        );
 
         $this->buildContainerWithDependencies($baseContainer, ['external' => $externalContainer]);
 
@@ -190,10 +195,15 @@ final class CrossContainerProcessorTest extends TestCase
     public function it_resolves_cross_container_references_in_method_calls(): void
     {
         $externalContainer = new ContainerBuilder();
-        $externalContainer->setDefinition('array_object', new Definition(\ArrayObject::class, [['foo' => 'bar']]));
+        $externalContainer->setDefinition('array_object', (new Definition(\ArrayObject::class, [['foo' => 'bar']]))->setPublic(true));
 
         $baseContainer = new ContainerBuilder();
-        $baseContainer->setDefinition('array_object', (new Definition(\ArrayObject::class, [[]]))->addMethodCall('exchangeArray', [new Reference('__external__.array_object')]));
+        $baseContainer->setDefinition(
+            'array_object',
+            (new Definition(\ArrayObject::class, [[]]))
+                ->addMethodCall('exchangeArray', [new Reference('__external__.array_object')])
+                ->setPublic(true)
+        );
 
         $this->buildContainerWithDependencies($baseContainer, ['external' => $externalContainer]);
 
@@ -202,7 +212,7 @@ final class CrossContainerProcessorTest extends TestCase
     }
 
     /**
-     * @param ContainerBuilder $baseContainer
+     * @param ContainerBuilder   $baseContainer
      * @param ContainerBuilder[] $externalContainers
      */
     private function buildContainerWithDependencies(ContainerBuilder $baseContainer, array $externalContainers): void
