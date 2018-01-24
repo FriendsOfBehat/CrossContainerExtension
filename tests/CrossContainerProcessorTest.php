@@ -212,7 +212,7 @@ final class CrossContainerProcessorTest extends TestCase
     }
 
     /**
-     * @param ContainerBuilder   $baseContainer
+     * @param ContainerBuilder $baseContainer
      * @param ContainerBuilder[] $externalContainers
      */
     private function buildContainerWithDependencies(ContainerBuilder $baseContainer, array $externalContainers): void
