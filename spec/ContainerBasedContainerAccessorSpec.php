@@ -41,7 +41,7 @@ final class ContainerBasedContainerAccessorSpec extends ObjectBehavior
 
     function it_gets_parameters_from_frozen_container(Container $container): void
     {
-        $container->isFrozen()->willReturn(true);
+        $container->isCompiled()->willReturn(true);
         $container->getParameterBag()->willReturn(new ParameterBag(['name' => 'value']));
 
         $this->getParameters()->shouldReturn(['name' => 'value']);
@@ -49,7 +49,7 @@ final class ContainerBasedContainerAccessorSpec extends ObjectBehavior
 
     function it_gets_parameters_from_not_frozen_container(Container $container): void
     {
-        $container->isFrozen()->willReturn(false);
+        $container->isCompiled()->willReturn(false);
         $container->getParameterBag()->willReturn(new ParameterBag(['name' => 'value']));
 
         $this->getParameters()->shouldReturn(['name' => 'value']);

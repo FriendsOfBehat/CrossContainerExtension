@@ -9,6 +9,11 @@ matrix:
         - php: nightly
     fast_finish: true
 
+env:
+  matrix:
+    - PREFER_LOWEST="--prefer-lowest"
+    - PREFER_LOWEST=""
+
 cache:
     directories:
         - vendor
@@ -17,7 +22,7 @@ before_install:
     - phpenv config-rm xdebug.ini || true
 
 install:
-    - composer update --prefer-dist
+    - composer update --prefer-dist $PREFER_LOWEST
 
 script:
     - composer validate --strict
