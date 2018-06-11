@@ -12,8 +12,8 @@ declare(strict_types=1);
  */
 
 namespace FriendsOfBehat\CrossContainerExtension;
-
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 final class ContainerBasedContainerAccessor implements ContainerAccessor
 {
@@ -25,7 +25,7 @@ final class ContainerBasedContainerAccessor implements ContainerAccessor
     /**
      * @param Container $container
      */
-    public function __construct(Container $container)
+    public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }

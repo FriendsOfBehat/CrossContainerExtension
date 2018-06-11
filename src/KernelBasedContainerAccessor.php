@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace FriendsOfBehat\CrossContainerExtension;
 
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 final class KernelBasedContainerAccessor implements ContainerAccessor
@@ -38,7 +39,11 @@ final class KernelBasedContainerAccessor implements ContainerAccessor
     {
         $container = $this->kernel->getContainer();
 
-        if (!$container instanceof Container) {
+        if ($container->has('test.service_container')) {
+            $container = $container->get('test.service_container');
+        }
+
+        if (!$container->has($id)) {
             throw new \DomainException('Could not get the services of kernel\'s container.');
         }
 
