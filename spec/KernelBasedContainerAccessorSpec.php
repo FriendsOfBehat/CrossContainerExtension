@@ -22,9 +22,11 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 final class KernelBasedContainerAccessorSpec extends ObjectBehavior
 {
-    function let(KernelInterface $kernel): void
+    function let(KernelInterface $kernel, ContainerInterface $container): void
     {
         $this->beConstructedWith($kernel);
+
+        $container->has('test.service_container')->willReturn(false);
     }
 
     function it_is_a_container_accessor(): void
@@ -32,12 +34,27 @@ final class KernelBasedContainerAccessorSpec extends ObjectBehavior
         $this->shouldImplement(ContainerAccessor::class);
     }
 
-    function it_gets_a_service(KernelInterface $kernel, Container $container): void
+    function it_uses_test_container_if_available(KernelInterface $kernel, ContainerInterface $container, ContainerInterface $testContainer)
+    {
+        $kernel->getContainer()->willReturn($container);
+        $container->has('test.service_container')->shouldBeCalled()->willReturn(true);
+
+        $service = new \stdClass();
+        $testContainer->get('acme')->willReturn($service);
+        $testContainer->has('acme')->willReturn(true);
+
+        $container->get('test.service_container')->shouldBeCalled()->willReturn($testContainer);
+
+        $this->getService('acme')->shouldReturn($service);
+    }
+
+    function it_gets_a_service(KernelInterface $kernel, ContainerInterface $container): void
     {
         $service = new \stdClass();
 
         $kernel->getContainer()->willReturn($container);
         $container->get('acme')->willReturn($service);
+        $container->has('acme')->willReturn(true);
 
         $this->getService('acme')->shouldReturn($service);
     }
@@ -45,6 +62,7 @@ final class KernelBasedContainerAccessorSpec extends ObjectBehavior
     function it_throws_an_exception_if_could_not_get_service(KernelInterface $kernel, ContainerInterface $container): void
     {
         $kernel->getContainer()->willReturn($container);
+        $container->has('acme')->willReturn(false);
 
         $this->shouldThrow(\DomainException::class)->during('getService', ['acme']);
     }
