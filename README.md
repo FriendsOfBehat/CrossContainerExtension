@@ -2,6 +2,9 @@
 
 Makes possible to inject services and parameters from other containers.
 
+
+#### This library is deprecated! It will not be supported anymore - if you're using it with ContextServiceExtension v1 and SymfonyExtension v1, please consider an upgrade to [SymfonyExtension v2](https://github.com/FriendsOfBehat/SymfonyExtension).
+
 ## Usage
 
 1. Install it:
